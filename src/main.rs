@@ -1,7 +1,10 @@
 mod builder;
+mod vfs_parser;
 
 use builder::Builder;
+
 use clap::Parser;
+use vfs_parser::VfsParser;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -20,9 +23,11 @@ fn main() {
         // Run builder mode
         Builder::new().run();
     } else {
-        // Parse all input and build the tree immediately
-        for input in cli.input {
-            dbg!(input);
+        let mut parser = VfsParser::new(); 
+        for item in cli.input {
+            parser.parse(item);
         }
+
+        parser.print_tree();
     }
 }

@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive"] }
+ptree = "0.4.0"
+thiserror = "1.0.49"
+vfs = { version = "0.9.0", features = ["embedded-fs"] }
