@@ -6,7 +6,7 @@ Virtree is a command-line tool for creating virtual file systems on the fly and 
 ## Example input
 
 ```
-virtree empty/ folder1/[file1.txt file2.txt] folder2/file3.txt
+virtree empty folder1/file1.txt,file2.txt folder2/file3.txt
 ```
 **Output:**
 ```
@@ -23,18 +23,18 @@ Virtree can be used with command line arguments, like the example shown above. B
 
 ### Input 
 #### Creating virtual folders
-Folders are created with the folder name followed by a forward slash. Back slashes are also accepted. 
+Folders are created with a name and no file extension.
 
 **Example**:
 ```
-my_folder/ 
+my_folder
 ```
 #### Creating virtual subfolders
-Subfolders are created by appending the path of the parent folder with the folder name followed by a forward slash. 
+Subfolders are created by appending the path of the parent folder with the folder name.
 
 **Example**:
 ```
-my_folder/my_subfolder/
+my_folder/my_subfolder
 ```
 #### Creating virtual files
 Files are created in the same way as folders, but the forward slash at the end is removed, and typically includes a file extension. 
@@ -44,6 +44,15 @@ Files are created in the same way as folders, but the forward slash at the end i
 file.txt
 my_folder/file.txt
 my_folder/my_subfolder/run.sh
+```
+
+#### Multiple virtual files and folders in sub-directory
+Multiple files can be created at a subdirectory without having to rewrite the path every time. Use commas (`,`) to separate the files. If the file name contains a comma, use a double comma (`,,`).
+
+**Example**:
+
+```
+virtree dir1/subdir/file1.txt,file2.txt
 ```
 
 ### Builder mode 
