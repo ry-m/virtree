@@ -5,6 +5,7 @@ use builder::Builder;
 
 use clap::Parser;
 use vfs_parser::VfsParser;
+use anyhow::{Context, Result};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -15,7 +16,7 @@ struct Cli {
     input: Vec<String>,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     if cli.input.len() == 0 {
@@ -24,9 +25,11 @@ fn main() {
     } else {
         let mut parser = VfsParser::new();
         for item in cli.input {
-            parser.parse_item(item);
+            parser.parse_item(item)?;
         }
 
         parser.print_tree();
     }
+
+    Ok(())
 }

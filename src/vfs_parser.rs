@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 
+use anyhow::{Context, Result};
 use ptree::TreeItem;
 use vfs::{MemoryFS, VfsPath};
 
@@ -45,9 +46,8 @@ impl VfsParser {
         VfsParser(VfsPath::new(MemoryFS::new()))
     }
 
-    pub fn parse_item(&mut self, input: String) {
-        // TODO: Fix use of unwrap()
-
+    /// Parses a single directory or file item from its path
+    pub fn parse_item(&mut self, input: String) -> Result<()> {
         // First, trim the end separator (if it exists).
         let trimmed = input.trim_end_matches(VfsParser::is_path_separator);
         // Split the last path separated item from its parent directory.
@@ -58,20 +58,35 @@ impl VfsParser {
         if let Some((parent_path, subpaths)) = split {
             for sp in subpaths.split(",") {
                 // Join the root, parent, and child paths. Append all.
-                let vpath = self.0.join(parent_path).unwrap().join(sp).unwrap();
-                vpath.create_dir_all().unwrap();
+                let vpath = self
+                    .0
+                    .join(parent_path)
+                    .with_context(|| format!("could not join parent path to root"))?
+                    .join(sp)
+                    .with_context(|| format!(""))?;
+
+                vpath.create_dir_all().with_context(|| format!(""))?;
             }
         } else {
             // Singular item
-            let dir = self.0.join(input).unwrap();
-            dir.create_dir_all().unwrap();
+            let dir = self
+                .0
+                .join(input)
+                .with_context(|| format!("could not join path to root directory"))?;
+
+            dir.create_dir_all()
+                .with_context(|| format!("could not create directories"))?;
         }
+
+        Ok(())
     }
 
+    /// Prints out the directory tree using the ptree library.
     pub fn print_tree(self) {
         ptree::output::print_tree(&self).unwrap();
     }
 
+    /// Returns true if c is a path separator
     fn is_path_separator(c: char) -> bool {
         c == '/' || c == '\\'
     }
@@ -85,7 +100,7 @@ mod tests {
     fn test_parse_singulars() {
         let mut parser = VfsParser::new();
         for x in ["foo", "bar", "abc"] {
-            parser.parse_item(x.to_string());
+            parser.parse_item(x.to_string()).unwrap();
         }
 
         for path in parser.0.read_dir().unwrap() {
@@ -97,7 +112,7 @@ mod tests {
     fn test_parse_subdirs() {
         let mut parser = VfsParser::new();
         for x in ["foo", "foo/bar", "foo/abc", "foo/bar/xyz"] {
-            parser.parse_item(x.to_string());
+            parser.parse_item(x.to_string()).unwrap();
         }
 
         for path in parser.0.read_dir().unwrap() {
@@ -109,11 +124,14 @@ mod tests {
     fn test_multidirs() {
         let mut parser = VfsParser::new();
         for x in ["foo/a,b,c", "foo/a/x,y"] {
-            parser.parse_item(x.to_string());
+            parser.parse_item(x.to_string()).unwrap();
         }
 
         for path in parser.0.read_dir().unwrap() {
-            assert!(&["/foo", "/foo/a", "/foo/b", "/foo/c", "/foo/a/x", "/foo/a/y"].contains(&path.as_str()));
+            assert!(
+                &["/foo", "/foo/a", "/foo/b", "/foo/c", "/foo/a/x", "/foo/a/y"]
+                    .contains(&path.as_str())
+            );
         }
     }
 }
