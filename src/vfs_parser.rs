@@ -76,3 +76,44 @@ impl VfsParser {
         c == '/' || c == '\\'
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_singulars() {
+        let mut parser = VfsParser::new();
+        for x in ["foo", "bar", "abc"] {
+            parser.parse_item(x.to_string());
+        }
+
+        for path in parser.0.read_dir().unwrap() {
+            assert!(&["/foo", "/bar", "/abc"].contains(&path.as_str()));
+        }
+    }
+
+    #[test]
+    fn test_parse_subdirs() {
+        let mut parser = VfsParser::new();
+        for x in ["foo", "foo/bar", "foo/abc", "foo/bar/xyz"] {
+            parser.parse_item(x.to_string());
+        }
+
+        for path in parser.0.read_dir().unwrap() {
+            assert!(&["/foo", "/foo/bar", "/foo/abc", "/foo/bar/xyz"].contains(&path.as_str()));
+        }
+    }
+
+    #[test]
+    fn test_multidirs() {
+        let mut parser = VfsParser::new();
+        for x in ["foo/a,b,c", "foo/a/x,y"] {
+            parser.parse_item(x.to_string());
+        }
+
+        for path in parser.0.read_dir().unwrap() {
+            assert!(&["/foo", "/foo/a", "/foo/b", "/foo/c", "/foo/a/x", "/foo/a/y"].contains(&path.as_str()));
+        }
+    }
+}
