@@ -25,7 +25,7 @@ fn main() {
     } else {
         let mut parser = VfsParser::new(); 
         for item in cli.input {
-            parser.parse(item);
+            parser.parse_item(item);
         }
 
         parser.print_tree();

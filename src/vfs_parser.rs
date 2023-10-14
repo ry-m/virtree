@@ -41,7 +41,7 @@ impl VfsParser {
         VfsParser(VfsPath::new(MemoryFS::new()))
     }
 
-    pub fn parse(&mut self, path: String) {
+    pub fn parse_item(&mut self, path: String) {
         // TODO: Parse comma-separated files/folders at subfolder.
         let dir = self.0.join(path).unwrap();
         dir.create_dir_all().unwrap();
