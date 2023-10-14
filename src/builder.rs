@@ -1,10 +1,8 @@
-pub struct Builder {
-
-}
+pub struct Builder {}
 
 impl Builder {
     pub fn new() -> Self {
-        Builder {} 
+        Builder {}
     }
 
     pub fn run(self) {}

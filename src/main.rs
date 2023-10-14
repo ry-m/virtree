@@ -11,7 +11,6 @@ use vfs_parser::VfsParser;
 struct Cli {
     // #[clap(long, action)]
     // it_just_works: bool,
-
     /// Sequence of virtual file and folder names.
     input: Vec<String>,
 }
@@ -23,7 +22,7 @@ fn main() {
         // Run builder mode
         Builder::new().run();
     } else {
-        let mut parser = VfsParser::new(); 
+        let mut parser = VfsParser::new();
         for item in cli.input {
             parser.parse_item(item);
         }
