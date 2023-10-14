@@ -41,13 +41,34 @@ impl VfsParser {
         VfsParser(VfsPath::new(MemoryFS::new()))
     }
 
-    pub fn parse_item(&mut self, path: String) {
-        // TODO: Parse comma-separated files/folders at subfolder.
-        let dir = self.0.join(path).unwrap();
-        dir.create_dir_all().unwrap();
+    pub fn parse_item(&mut self, input: String) {
+        // TODO: Fix use of unwrap()
+
+        // First, trim the end separator (if it exists). 
+        let trimmed = input.trim_end_matches(VfsParser::is_path_separator);
+        // Split the last path separated item from its parent directory. 
+        let split = trimmed.rsplit_once(VfsParser::is_path_separator);
+
+        // If the split was successful (implies there was a nested directory), check
+        // for comma separated values on the child item. 
+        if let Some((parent_path, subpaths)) = split {
+            for sp in subpaths.split(",") {
+                // Join the root, parent, and child paths. Append all.
+                let vpath = self.0.join(parent_path).unwrap().join(sp).unwrap();
+                vpath.create_dir_all().unwrap();
+            }
+        } else {
+            // Singular item
+            let dir = self.0.join(input).unwrap();
+            dir.create_dir_all().unwrap();
+        }
     }
 
     pub fn print_tree(self) {
         ptree::output::print_tree(&self).unwrap();
+    }
+
+    fn is_path_separator(c: char) -> bool {
+        c == '/' || c == '\\'
     }
 }
