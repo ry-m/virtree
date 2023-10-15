@@ -44,3 +44,6 @@ Output:
 
 ## Usage (builder mode)
 Coming soon...
+
+## Flags 
+- `--include`: Include the contents of the current directory in the virtual file system. Running virtree with just the include flag will have a similar output to running the `tree` command with no arguments. 
