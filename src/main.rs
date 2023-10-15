@@ -42,7 +42,7 @@ fn main() -> Result<()> {
 
     if cli.input.len() == 0 {
         // Run builder mode
-        Builder::new().run();
+        Builder::new(parser).run();
     } else {
         for item in cli.input {
             parser.parse_item(item)?;
