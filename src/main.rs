@@ -5,7 +5,7 @@ use builder::Builder;
 
 use clap::Parser;
 use vfs_parser::VfsParser;
-use anyhow::{Context, Result};
+use anyhow::Result;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
