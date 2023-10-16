@@ -31,11 +31,19 @@ impl TreeItem for VfsParser {
     }
 
     fn children(&self) -> std::borrow::Cow<[Self::Child]> {
-        let v = if let Ok(list) = self.0.read_dir() {
+        let mut v = if let Ok(list) = self.0.read_dir() {
             list.map(VfsParser).collect()
         } else {
             Vec::new()
         };
+
+        // Sort the children by alphabetical order.
+        // In the future, this can be changed to a different order.
+        v.sort_by(|a, b| {
+            a.0.as_str()
+                .partial_cmp(b.0.as_str())
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
 
         Cow::from(v)
     }
