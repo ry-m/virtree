@@ -90,8 +90,8 @@ impl VfsParser {
     }
 
     /// Prints out the directory tree using the ptree library.
-    pub fn print_tree(self) {
-        ptree::output::print_tree(&self).unwrap();
+    pub fn print_tree(&self) {
+        ptree::output::print_tree(self).unwrap();
     }
 
     /// Returns true if c is a path separator

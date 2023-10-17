@@ -1,12 +1,12 @@
 mod builder;
 mod vfs_parser;
 
-use builder::Builder;
-
 use anyhow::{Context, Result};
 use clap::Parser;
-use vfs_parser::VfsParser;
 use walkdir::WalkDir;
+
+use vfs_parser::VfsParser;
+use builder::app::App;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -42,7 +42,7 @@ fn main() -> Result<()> {
 
     if cli.input.len() == 0 {
         // Run builder mode
-        Builder::new(parser).run();
+        App::new(&parser).run()?;
     } else {
         for item in cli.input {
             parser.parse_item(item)?;
