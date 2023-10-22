@@ -42,7 +42,12 @@ fn main() -> Result<()> {
 
     if cli.input.len() == 0 {
         // Run builder mode
-        App::new(&parser).run()?;
+        let mut app = App::new(&parser);
+        let result = app.run();
+        // Ensure app is shut down.
+        app.shutdown()?;
+
+        result?;
     } else {
         for item in cli.input {
             parser.parse_item(item)?;
